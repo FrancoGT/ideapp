@@ -6,13 +6,15 @@ class Dashboard extends CI_Controller
     {
         parent::__construct();
         $this->load->model('usuario_model');
-        $this->load->model('obra_model');
+        $this->load->model('material_model','material');
     }
     public function index()
     {
+        $enlace['link']="servicio_reportes/reporte_general.js";
+        $enlace['otro_link']="servicio_reportes/otros_reportes.js";
         if ($this->usuario_model->sigue_logeado())
         {
-            $this->load->view('template/header');
+            $this->load->view('template/header', $enlace);
             $this->load->view('template/sidebar');
             $this->load->view('dashboard/index');
             $this->load->view('template/footer');
@@ -22,19 +24,24 @@ class Dashboard extends CI_Controller
             redirect("login/index");
         }
     }
-    public function get_proyecto_construccion_json_calendario()
+    public function get_array_materiales()
     {
-        $data = $this->obra_model->mostrar_items_proyecto_construccion();
-        foreach ($data as $row) 
+        $data = $this->material->listar_materiales_top_5();
+        $array_info = [];
+        foreach($data as $cd)
         {
-            $jsondata[] = array('title' => $row->nombre_proyecto,
-                                'description' => 'Proyecto Nº: '.$row->id_proyecto_construccion,
-                                'start' => $row->fecha_inicio,
-                                'color' => '#3A87AD',
-                                'textColor'   => '#ffffff'
-                            );
+            array_push($array_info, $cd->nombre_material);
         }
-        echo json_encode($jsondata);
+        echo json_encode($array_info);
     }
-    
+    public function get_array_precios()
+    {
+        $data = $this->material->listar_precios_top_5();
+        $array_info = [];
+        foreach($data as $cd)
+        {
+            array_push($array_info, $cd->precio_unitario);
+        }
+        echo json_encode($array_info);
+    }
 }

@@ -11,14 +11,6 @@
 <link rel="stylesheet" href="<?php echo base_url()?>assets/css/style.css">
 
 
-<script src="<?php echo base_url()?>assets/js/vue.min.js"></script>
-<script src="<?php echo base_url()?>assets/js/axios.min.js"></script>
-<script src="<?php echo base_url()?>assets/js/jquery.min.js"></script>
-<script type="text/javascript" src="<?php echo base_url()?>assets/js/jquery-1.3.1.min.js"></script>	
-	<script type="text/javascript" language="javascript" src="<?php echo base_url()?>assets/js/jquery.dropdownPlain.js"></script>
-
-<!-- Pendiente: jalar nombre usuario y verificar si inicio sesion -->
-<!-- ejemplo de href: href="<?php echo base_url();?>user" -->
 <ul class="nav justify-content-center bg-dark text-light">
   <li class="nav-item">
         <a class="nav-link text-white h4"> <h1>Sistema de RRHH de <img src="<?php echo base_url();?>assets/img/civue.png" width="100" height="100"> </h1> 
@@ -70,11 +62,7 @@
         </div>
 <br>
 </body>
-<script src="<?php echo base_url();?>/assets/js/pagination.js"></script>
-<script src="<?php echo base_url();?>/assets/js/app.js"></script>
 <div align="center">
-<!--Pendiente: Boton Cerrar Sesion solo si el usuario esta logeado-->
-<strong>Direcci&oacute;n: Urb. La Castro C-14 JBL y Rivero - Arequipa (Costado Instituto Pedro P. Diaz) &nbsp;&nbsp;&nbsp;&nbsp; </strong>
 </div>
 <br>
 </html>

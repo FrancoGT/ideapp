@@ -14,7 +14,7 @@
 <br>
 <form method="POST" action="<?php echo base_url();?>index.php/servicio/modulo_obras_construccion">
   <button class="btn btn-lg btn-primary" name="obras" id="obras" type="submit">
-  OBRAS DE CONSTRUCCI&Oacute;N
+  PROYECTOS DE OBRA
   </button>
 </form>
 <br>
@@ -22,11 +22,9 @@
 <br>
 <form method="POST" action="<?php echo base_url();?>index.php/servicio/modulo_materiales_obra">
   <button class="btn btn-lg btn-primary" name="materiales" id="materiales" type="submit">
-  RECEPCI&Oacute;N DE MATERIALES
+  MATERIALES DE OBRA
   </button>
 </form>
-<br>
-<br>
 <br>
 <br>
 <br>

@@ -7,6 +7,7 @@ class Proyecto_construccion extends CI_Controller
     {
         parent::__construct();
         $this->load->model('usuario_model');
+        $this->load->model('obra_model','obra'); //simplificamos el nombre del modelo cuando lo llamamos
     }
     public function index()
     {
@@ -23,7 +24,7 @@ class Proyecto_construccion extends CI_Controller
             redirect("login/index");
         } 
     }
-    public function agregar_proyecto_construccion()
+    public function insertarProyecto_construccion()
     {
     	$config = array(
                     array('field' => 'nombre',
@@ -72,7 +73,7 @@ class Proyecto_construccion extends CI_Controller
         echo json_encode($result);
     }
 
-    public function modificar_proyecto_construccion()
+    public function actualizarProyecto_construccion()
     {		
         $config = array(
               array('field' => 'nombre',
@@ -102,7 +103,6 @@ class Proyecto_construccion extends CI_Controller
                 'fecha_fin'=>form_error('fecha_fin'),
                 'estado'=>form_error('estado')
             );
-            
         }
         else
         {
@@ -121,24 +121,8 @@ class Proyecto_construccion extends CI_Controller
        
         }
         echo json_encode($result);
-     }
-     //Pendiente: actualizar estado en lugar de eliminar
-    public function deleteProyecto_construccion()
-    {
-         $id = $this->input->post('id_proyecto_construccion');
-         if($this->obra->deleteProyecto_construccion($id))
-         {
-             $msg['error'] = false;
-            $msg['success'] = 'Proyecto Construccion eliminado exitosamente';
-         }
-         else
-         {
-             $msg['error'] = true;
-         }
-         echo json_encode($msg);
-         
     }
-    public function searchProyecto_construccion()
+    public function buscar_proyecto_construccion()
     {
         $value = $this->input->post('text');
         $query =  $this->obra->searchProyecto_construccion($value);

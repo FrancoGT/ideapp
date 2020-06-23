@@ -8,12 +8,47 @@ class Usuario_model extends CI_Model
 		if ($permiso['user_id'] == NULL)
 		{
 			return false;
-			//redirect("login/index");
 		}
 		else
 		{
 			return true;
 		}
+	}
+	public function get_perfil()
+	{
+		$id_user = $this->get_id_user();
+		$query = $this->db->query("SELECT u.id_user, u.username, p.id_persona, p.nombres, p.apellidos FROM tbl_persona as p LEFT JOIN tbl_users as u ON u.id_persona=p.id_persona WHERE u.id_user='$id_user'");
+		$responce = array();
+		foreach ($query->result() as $row)
+        {
+			$fila = array(  
+                'id_user'=> $row->id_user,  
+                'username'=> $row->username, 
+                'id_persona'=> $row->id_persona, 
+                'nombres'=> $row->nombres,
+                'apellidos'=> $row->apellidos,
+                'contra'=> ''
+            );
+            array_push($responce, $fila);
+        }
+        echo json_encode($responce);
+	}
+	public function actualizar($data_user, $data_persona)
+    {
+		$this->db
+			->where('id_user', $data_user['id_user'])
+			->update('tbl_users', $data_user);
+		$this->actualizar_persona($data_persona);
+	}
+	public function actualizar_persona($data_persona)
+	{
+		$this->db
+		->where('id_persona', $data_persona['id_persona'])
+		->update('tbl_persona', array(
+			'id_persona' => $data_persona['id_persona'],
+			'nombres' => $data_persona['nombres'],
+			'apellidos'  => $data_persona['apellidos'],
+		));
 	}
     public function get_id_user()
     {

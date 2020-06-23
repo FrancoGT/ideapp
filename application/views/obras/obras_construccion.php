@@ -1,51 +1,44 @@
-<div id="modulo_proyecto_construccion">
+<div id="obras_construccion">
   <br>
     <div  align="center">
-        <h1>OBRAS EN CONSTRUCCI&Oacute;N</h1>
+        <h1>PROYECTOS DE OBRA</h1>
     </div>
-	<br>
-	<div align="center" class="col-md-8">
-    <div align="center" >
-    <form action="javascript:void(0);" id="modulo_proyecto_construccion">
-			<div align="center" v-if="cargando_proyecto_construccion">
-				<h1>Cargando registros... </h1>
-			</div>
-			<div align="center" class="col-md-8">
-			<table align="center" class="table is-bordered is-hoverable" v-if="!cargando_proyecto_construccion">
-				<thead class="text-white bg-dark" >
-					<tr>
-						<th class="text-white"> Nombre </th>
-						<th class="text-white"> Fecha de Inicio </th>
-                        <th class="text-white"> Fecha de Fin </th>
-						<th class="text-white"> Estado </th>
-						<th class="text-white">  </th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr v-for="item in proyecto_construccion">
-						<td with="50">
-							<input type="text" size="50" v-model="item.nombre_proyecto" />
-						</td>
-                        <td>
-							<input type="date" v-model="item.fecha_inicio" />
-						</td>
-                        <td>
-							<input type="date" v-model="item.fecha_fin" />
-						</td>
-						<td>
-							<select id="estado" name="estado">
-								<option value="1"> Activo </option>
-								<option value="0"> Inactivo </option>
-							</select>
-						</td>
-						<td>
-							<button class="btn btn-success" v-on:click="modificarProyecto_construccion(item)"> Guardar </button>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</form>
-	</div>
+	<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+           <table class="table bg-dark my-3">
+               <tr>
+                   <td> <button class="btn btn-default btn-block" @click="addModal= true">Nuevo Registro</button></td>
+                   <td> <input type="search" placeholder="Buscar" class="form-control" name="search" v-model="search.text"></td>
+               </tr>
+           </table>
+            <table class="table is-bordered is-hoverable">
+               <thead class="text-white bg-dark" >
+                <th class="text-white">Nombre</th>
+                <th class="text-white">Inicio</th>
+                <th class="text-white">Fin</th>
+                <th class="text-white">Estado</th>
+                <th class="text-center text-white"></th>
+                </thead>
+                <div align="center" v-if="cargando_obras">
+				    <h1>Cargando registros... </h1>
+			    </div>
+                <tbody class="table-light">
+                    <tr v-for="item in proyecto_construccion" class="table-default">
+                        <td>{{item.nombre_proyecto}}</td>
+                        <td>{{item.fecha_inicio}}</td>
+                        <td>{{item.fecha_fin}}</td>
+                        <td>{{item.estado_proyecto}}</td>
+                        <td><button class="btn btn-info fa fa-edit" @click="editModal = true; selectProyecto_construccion(item)"></button></td>
+                    </tr>
+                    <tr v-if="emptyResult">
+                      <td colspan="9" rowspan="4" class="text-center h1">No hay registros</td>
+                  </tr>
+                </tbody>
+                
+            </table>
+        </div>
+  
     </div>
 </div>
-</div>
+<?php include 'modal.php';?>

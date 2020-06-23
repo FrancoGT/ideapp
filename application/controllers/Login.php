@@ -45,7 +45,8 @@ class Login extends CI_Controller
                             $session_data = array(
                                 'user_id'   => $apps->id_user,
                                 'user_name' => $apps->username,
-                                'user_pass' => $apps->password
+                                'user_pass' => $apps->password,
+                                'current_id' => ''
                             );
                             //set session userdata
                             $this->session->set_userdata($session_data);

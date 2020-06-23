@@ -3,23 +3,10 @@ USE `appidea`;
 CREATE TABLE `tbl_persona`
 (
   `id_persona` INT(150) NOT NULL AUTO_INCREMENT,
-  `documento` VARCHAR(100) NOT NULL,
   `nombres` VARCHAR(100) NOT NULL,
   `apellidos` VARCHAR(100) NULL,
-  `direccion` VARCHAR(100) NULL,
-  `telefono` VARCHAR(100) NULL,
-  `email` VARCHAR(150) NULL,
-  `gender` varchar(15) NOT NULL,
-  PRIMARY KEY (`id_persona`),
-  UNIQUE(`documento`)
+  PRIMARY KEY (`id_persona`)
 );
-CREATE TABLE `tbl_session`
-(
-  `id` VARCHAR(40) NOT NULL,
-  `ip_address` VARCHAR(45) NOT NULL,
-  `timestamp` INT(10) NOT NULL,
-  `data` BLOB NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_proyecto_construccion`
 (
   `id_proyecto_construccion` INT(150) NOT NULL AUTO_INCREMENT,
@@ -73,6 +60,15 @@ CREATE TABLE `tbl_control_horas`
   `fecha_control_horas` DATE NOT NULL,
   PRIMARY KEY (`id_control_horas`)
 );
+CREATE TABLE `tbl_area_cargo`
+(
+  `id_area_cargo` INT(150) NOT NULL AUTO_INCREMENT,
+  `cod_area_cargo` VARCHAR(100),
+  `area` VARCHAR(100) NOT NULL,
+  `cargo` VARCHAR(100) NULL,
+  `estado_area_cargo` TINYINT(1) NOT NULL,
+  PRIMARY KEY (`id_area_cargo`)
+);
 /*Tablas con FK*/
 CREATE TABLE `tbl_users`
 (
@@ -84,16 +80,19 @@ CREATE TABLE `tbl_users`
   `estado_usuario` TINYINT(1) NOT NULL,
   PRIMARY KEY (`id_user`),
   FOREIGN KEY (`id_persona`) REFERENCES tbl_persona(`id_persona`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+);
 CREATE TABLE `tbl_trabajador`
 (
   `id_trabajador` INT(150) NOT NULL AUTO_INCREMENT,
+  `cod_trabajador` VARCHAR(100),
   `id_persona` INT(150) NOT NULL,
-  `tipo` TINYINT(1) NOT NULL, /*1: obra construccion, 2: administrativo, 3: recursos humanos*/
-  `cargo` TINYINT(1) NOT NULL, /*1: empleado regular, 2: supervisor, 3: jefe de area*/
+  `id_area_cargo` INT(150),
   `estado_trabajador` TINYINT(1) NOT NULL,
   PRIMARY KEY (`id_trabajador`),
-  FOREIGN KEY (`id_persona`) REFERENCES tbl_persona(`id_persona`)
+  FOREIGN KEY (`id_persona`) REFERENCES tbl_persona(`id_persona`),
+  FOREIGN KEY (`id_area_cargo`) REFERENCES tbl_area_cargo(`id_area_cargo`),
+  UNIQUE(`cod_trabajador`)
+  
 );
 CREATE TABLE `tbl_proyecto_construccion_trabajador`
 (
@@ -160,16 +159,19 @@ CREATE TABLE `tbl_material_obra_costo`
 
 
 
-INSERT INTO `tbl_persona` (`id_persona`, `documento`, `nombres`, `apellidos`, `direccion`, `telefono`, `email`, `gender`) VALUES
-(1, '20601780', 'Percy', 'Delgado Tavera', 'Mza. C Lote. 14', '958132401', 'ideainversiones@gmail.com', 'boy'),
-(2, '72703963', 'Franco Javier', 'Gutierrez Tamayo', 'Jose Olaya 121', '932035462', 'francofr8000@gmail.com', 'boy'),
-(3, '10000000', 'Willy', '', '', '', '', 'boy'),
-(4, '10000001', 'Edilfonso', '', '', '', '', 'boy'),
-(5, '10000002', 'Marcial', '', '', '', '', 'boy'),
-(6, '10000003', 'Christian', '', '', '', '', 'boy'),
-(7, '10000004', 'Richard', '', '', '', '', 'boy'),
-(8, '10000005', 'Camilo', '', '', '', '', 'boy'),
-(9, '10000006', 'Carlos', '', '', '', '', 'boy');
+INSERT INTO `tbl_persona` (`id_persona`, `nombres`, `apellidos`) VALUES
+(1, 'Percy', 'Delgado Tavera'),
+(2, 'Franco Javier', 'Gutierrez Tamayo'),
+(3, 'Willy', ''),
+(4, 'Edilfonso', ''),
+(5, 'Marcial', ''),
+(6, 'Christian', ''),
+(7, 'Richard', ''),
+(8, 'Camilo', ''),
+(9, 'Carlos', '');
+
+INSERT INTO `tbl_area_cargo` (`id_area_cargo`, `cod_area_cargo`, `area`, `cargo`, `estado_area_cargo`) VALUES
+(1, '00001', 'Obra', 'Obrero', 1);
 
 INSERT INTO `tbl_users` (`id_user`, `id_persona`, `username`, `password`, `tipo`, `estado_usuario`) VALUES
 (1, 1, 'admin', '21232f297a57a5a743894a0e4a801fc3', 1, 1),
@@ -218,7 +220,7 @@ INSERT INTO `tbl_material` (`id_material`, `nombre_material`, `unidad`, `estado_
 (33, 'CODOS DE 1/2\" A 45', 'm', 1),
 (34, 'CODO INSERTO 1/2\"', 'm', 1),
 (35, 'CODOS DE 3/4\"', 'm', 1),
-(36, 'CEMENTO YURA', 'Kg', 1),
+(36, 'CEMENTO YURA', 'Kg', 0),
 (37, 'TEE DE 3/4\"', 'm', 1),
 (38, 'TEE DE 2\"', 'm', 1),
 (39, 'YEE DE 2\"', 'm', 1),
@@ -524,14 +526,14 @@ INSERT INTO `tbl_material_obra_costo` (`id_material_obra`, `id_obra`, `id_materi
 (NULL, 2, 75, 34, '2019-09-01', 1, 1),
 (NULL, 1, 8, 23, '2019-11-14', 1, 1);
 
-INSERT INTO `tbl_trabajador` (`id_trabajador`, `id_persona`, `tipo`, `cargo`, `estado_trabajador`) VALUES
-(1, 3, 1, 1, 1),
-(2, 4, 1, 1, 1),
-(3, 5, 1, 1, 1),
-(4, 6, 1, 1, 1),
-(5, 7, 1, 1, 1),
-(6, 8, 1, 1, 1),
-(7, 9, 1, 1, 1);
+INSERT INTO `tbl_trabajador` (`id_trabajador`, `cod_trabajador`, `id_persona`, `id_area_cargo`, `estado_trabajador`) VALUES
+(1, '00001', 3, 1, 1),
+(2, '00002', 4, 1, 1),
+(3, '00003', 5, 1, 1),
+(4, '00004', 6, 1, 1),
+(5, '00005', 7, 1, 1),
+(6, '00006', 8, 1, 1),
+(7, '00007', 9, 1, 1);
 
 INSERT INTO `tbl_proyecto_construccion_trabajador` (`id_proyecto_construccion_trabajador`, `id_proyecto_construccion`, `id_trabajador`) 
 VALUES (NULL, '1', '1'),
@@ -632,36 +634,3 @@ VALUES (NULL, 1, 1),
 (NULL, 7, 4),
 (NULL, 7, 5),
 (NULL, 7, 6);
-
-/*
-Pendiente: Modificar tablas
-*/
-
-CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
-  `firstname` varchar(50) NOT NULL,
-  `lastname` varchar(50) NOT NULL,
-  `gender` varchar(15) NOT NULL,
-  `birthday` varchar(50) NOT NULL,
-  `email` varchar(50) NOT NULL,
-  `contact` varchar(50) NOT NULL,
-  `address` varchar(200) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-
-
-INSERT INTO `users` (`id`, `firstname`, `lastname`, `gender`, `birthday`, `email`, `contact`, `address`) VALUES
-(1, 'Marc Kevin', 'Flores', 'boy', '1998-08-06', 'marckevinflores@gmail.com', '09092884082', 'Princetown Bagumbong Caloocan City'),
-(2, 'Kim Paolo', 'Flores', 'boy', '2001-06-06', 'kimpaolo@gmail.com', '543534', 'Bagumbong Caloocan City');
-
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`);
-
-
-ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
-  INSERT INTO `tbl_session` (`id`, `ip_address`, `timestamp`, `data`) VALUES
-('gefurdfdju2ehd6affn33bfpik2ghi6m', '::1', 1490264823, 0x5f5f63695f6c6173745f726567656e65726174657c693a313439303236343532333b);
-
-

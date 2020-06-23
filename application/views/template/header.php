@@ -10,17 +10,20 @@
     <link rel="stylesheet" href="<?php echo base_url()?>assets/css/font-awesome.min.css">
     <link rel="stylesheet" href="<?php echo base_url()?>assets/css/style.css">
 
-    <script src="<?php echo base_url()?>assets/js/jquery.min.js"></script>
+    <link rel="stylesheet" href="<?php echo base_url()?>assets/css/chartist.min.css">
+    <link rel="stylesheet" href="<?php echo base_url()?>assets/css/slice.css">
+    <script type="text/javascript" src="https://unpkg.com/vue@2.1.8/dist/vue.js"></script>
+    <script type="text/javascript" src="<?php echo base_url()?>assets/js/jquery.min.js"></script>
     <script type="text/javascript" src="<?php echo base_url() ?>assets/js/vue.js"></script>
     <script type="text/javascript" src="<?php echo base_url() ?>assets/js/vue-resource.min.js"></script>
-    <script type="text/javascript" src="<?php echo base_url() ?>assets/js/axios.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url()?>assets/css/fullcalendar.css" />
-    <script type="text/javascript" src="<?php echo base_url()?>assets/js/moment.min.js"></script>
-    <script type="text/javascript" src="<?php echo base_url()?>assets/js/fullcalendar.min.js"></script>
-    <script type="text/javascript" src="<?php echo base_url()?>assets/js/funciones_auxiliares.js"></script>
+    <script type="text/javascript" src="<?php echo base_url() ?>assets/js/jquery.easy-autocomplete.min.js"></script>
+    <script type="text/javascript" src="<?php echo base_url() ?>assets/js/funciones_auxiliares.js"></script>
+    <script type="text/javascript" src="<?php echo base_url();?>/assets/js/<?php echo $link;?>"></script>
+    <script type="text/javascript" src="<?php echo base_url();?>/assets/js/<?php echo $otro_link;?>"></script>
 
+    <script type="text/javascript" src="<?php echo base_url() ?>assets/js/chartist.min.js"></script>
+    <script type="text/javascript" src="<?php echo base_url() ?>assets/js/chart.min.js"></script>
 
-<!-- ejemplo de href: href="<?php echo base_url();?>user" -->
 <ul class="nav justify-content-center bg-dark text-light">
   <li class="nav-item">
         <a class="nav-link text-white h4"> <h1>Sistema de RRHH de <img src="<?php echo base_url();?>assets/img/civue.png" width="100" height="100"> </h1> 
@@ -51,61 +54,5 @@
 
     }
 </style>
-<script>
-    function addZero(i) 
-    {
-        if (i < 10) 
-        {
-            i = '0' + i;
-        }
-        return i;
-    }
-    var hoy = new Date();
-    var dd = hoy.getDate();
-    if(dd<10) 
-    {
-        dd='0'+dd;
-    } 
-    if(mm<10) 
-    {
-        mm='0'+mm;
-    }
-    var mm = hoy.getMonth()+1;
-    var yyyy = hoy.getFullYear();
-    dd=addZero(dd);
-    mm=addZero(mm);
-    $(document).ready(function() 
-    {
-        $('#calendar').fullCalendar(
-        {
-            header: 
-            {
-                left: 'prev,next',
-                center: 'title',
-                right: 'month,agendaWeek,agendaDay'
-            },
-            defaultDate: yyyy+'-'+mm+'-'+dd,
-            buttonIcons: true, // show the prev/next text
-            weekNumbers: false,
-            editable: true,
-            eventLimit: true, // allow "more" link when too many events 
-            events: 
-            {
-                url: "get_proyecto_construccion_json_calendario"
-            },
-            dayClick: function (date, jsEvent, view) 
-            {
-                alert('Has hecho click en: '+ date.format());
-            }, 
-            eventClick: function (calEvent, jsEvent, view) 
-            {
-                //$('#event-title').text(calEvent.title);
-                //$('#event-description').html(calEvent.description);
-                //$('#modal-event').modal();
-            },  
-        });
-    });
-</script>
 </head>
 <body class="bg-light">
-

@@ -1,47 +1,43 @@
-<div id="modulo_materiales">
+<div id="materiales_obra">
   <br>
-    <div align="center">
-        <h1>MATERIALES REGISTRADOS</h1>
-		<br>
+    <div  align="center">
+        <h1>MATERIALES DE OBRA</h1>
     </div>
-   <div align="center" class="col-md-12">
-    <div align="center">
-    <form action="javascript:void(0);" id="modulo_materiales">
-			<div align="center" v-if="cargando_materiales">
-				<h1>Cargando registros... </h1>
-			</div>
-			<div align="center" class="col-md-8">
-			<table align="center" class="table is-bordered is-hoverable" v-if="!cargando_materiales">
-				<thead class="text-white bg-dark" >
-					<tr>
-						<th class="text-white"> Nombre </th>
-						<th class="text-white"> Unidad </th>
-						<th class="text-white"> Estado </th>
-						<th class="text-white">  </th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr v-for="item in materiales">
-						<td width="50">
-							<input type="text" size="50" v-model="item.nombre_material" />
-						</td>
-                        <td width="11">
-							<input type="text" size="11" v-model="item.unidad" />
-						</td>
-						<td>
-							<select id="estado" name="estado">
-								<option value="1"> Activo </option>
-								<option value="0"> Inactivo </option>
-							</select>
-						</td>
-						<td>
-							<button class="btn btn-success" v-on:click="modificarMaterial(item)"> Guardar </button>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</form>
-		</div>
+	<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+           <table class="table bg-dark my-3">
+               <tr>
+                   <td> <button class="btn btn-default btn-block" @click="addModal= true">Nuevo Registro</button></td>
+                   <td><input placeholder="Buscar" type="search" class="form-control" ></td>
+               </tr>
+           </table>
+            <table class="table is-bordered is-hoverable">
+               <thead class="text-white bg-dark" >
+                <th class="text-white"> Nombre </th>
+                <th class="text-white"> Unidad </th>
+                <th class="text-white"> Estado </th>
+                <th class="text-center text-white"></th> <!---  colspan="2"   -->
+                </thead>
+                <tbody class="table-light">
+                <div align="center" v-if="cargando_materiales">
+				    <h1>Cargando registros... </h1>
+			    </div>
+                    <tr v-for="item in materiales" class="table-default">
+                        <td>{{item.nombre_material}}</td>
+                        <td>{{item.unidad}}</td>
+                        <td>{{item.estado_material}}</td>
+                        <td><button class="btn btn-info fa fa-edit" @click="editModal = true; selectMaterial(item)"></button></td>
+                    </tr>
+                    <tr v-if="emptyResult">
+                      <td colspan="9" rowspan="4" class="text-center h1">No hay registros</td>
+                    </tr>
+                </tbody>
+                
+            </table>
+            
+        </div>
+  
     </div>
 </div>
-</div>
+<?php include 'modal.php';?>

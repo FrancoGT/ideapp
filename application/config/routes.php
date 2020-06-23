@@ -52,6 +52,27 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller'] = 'login';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
+
+$route['get_array_materiales']['get'] = 'dashboard/get_array_materiales';
+$route['get_array_precios']['get'] = 'dashboard/get_array_precios';
+
+//metodos para mostrar registros
 $route['recuperar_proyecto_construccion']['get'] = 'servicio/recuperar_proyecto_construccion';
 $route['recuperar_materiales']['get'] = 'servicio/recuperar_materiales';
-$route['recuperar_obreros']['get'] = 'recurso_humano/recuperar_obreros';
+$route['recuperar_trabajadores']['get'] = 'recurso_humano/recuperar_trabajadores';
+$route['recuperar_areas_cargos']['get'] = 'recurso_humano/recuperar_areas_cargos';
+$route['recuperar_perfil']['get'] = 'recurso_humano/recuperar_perfil';
+$route['recuperar_presupuestos']['get'] = 'finanza/recuperar_presupuestos';
+$route['recuperar_pagos']['get'] = 'finanza/recuperar_pagos';
+//metodos para insertar y actualizar registros
+$route['insertar_proyecto_construccion']['post'] = 'servicio/insertar_proyecto_construccion';
+$route['actualizar_proyecto_construccion']['post'] = 'servicio/actualizar_proyecto_construccion';
+$route['insertar_material']['post'] = 'servicio/insertar_material';
+$route['actualizar_material']['post'] = 'servicio/actualizar_material';
+$route['insertar_trabajador']['post'] = 'recurso_humano/insertar_trabajador';
+$route['actualizar_trabajador']['post'] = 'recurso_humano/actualizar_trabajador';
+$route['insertar_area_cargo']['post'] = 'recurso_humano/insertar_area_cargo';
+$route['actualizar_area_cargo']['post'] = 'recurso_humano/actualizar_area_cargo';
+
+//metodos para hacer busquedas
+$route['buscar_proyecto_construccion']['get'] = 'servicio/buscar_proyecto_construccion';

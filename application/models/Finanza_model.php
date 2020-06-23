@@ -51,6 +51,16 @@ class Finanza_model extends CI_Model
             return number_format($var, 0, '.', '');
         }
     }
+    public function get_codigo_trabajador($id_trabajador)
+    {
+        $cod_trabajador = '';
+        $query = $this->db->query("SELECT cod_trabajador FROM tbl_trabajador WHERE id_trabajador=$id_trabajador");
+        foreach($query->result() as $row)
+        {
+            $cod_trabajador = $row->cod_trabajador;
+        }
+        return $cod_trabajador;
+    }
     public function multiplicar($num1, $num2)
     {
         $multiplicacion = $this->formato_numerico($num1) * $this->formato_numerico($num2);
@@ -125,34 +135,62 @@ class Finanza_model extends CI_Model
         { 
             $gasto_total = $gasto_total + $this->get_gasto($id_obra, $row->id_material);
             //echo $this->get_nombre_material($row->id_material).": ";
-            //echo $this->gasto_total($id_obra, $row->id_material)."<br>";
+            //echo $this->gasto_total($id_obra, $row->id_material)."<br>"ash;
         }
         return $gasto_total;
     }
-    public function mostrar_costos($id_obra, $id_material)
+    public function listar_presupuestos()
     {
-        $query = $this->db->query("SELECT m.nombre_material, c.precio_unitario, c.cantidad, ca.precio, moc.fecha_costo FROM tbl_material_obra_costo as moc LEFT JOIN tbl_costo as c ON moc.id_costo=c.id_costo LEFT JOIN tbl_material as m ON moc.id_material=m.id_material LEFT JOIN tbl_costo_adicional as ca ON moc.id_costo_adicional=ca.id_costo_adicional WHERE moc.id_obra=$id_obra AND moc.id_material=$id_material AND moc.estado_material_obra_costo=1");
-        echo "<table class='table table-bordered table-hover'>
-                <th>Material</th>
-                <th>Precio Unitario</th>
-                <th>Cantidad</th>
-                <th>Costo Adicional</th>
-                <th>SubTotal</th>
-                <th>Fecha</th>
-              </tr>";
-        foreach($query->result() as $row)
+        $this->load->library('session');
+        $id_proyecto_construccion = $this->session->userdata('current_id');
+        $tipo_obra = '';
+        $estado = '';
+        $query = $this->db->query("SELECT pc.id_proyecto_construccion, pc.nombre_proyecto, o.tipo, m.nombre_material, c.precio_unitario, c.cantidad, ca.precio, moc.fecha_costo, moc.estado_material_obra_costo FROM 
+        tbl_material_obra_costo as moc LEFT JOIN tbl_obra as o ON moc.id_obra=o.id_obra LEFT JOIN tbl_detalle_proyecto_obra as dpo ON o.id_obra=dpo.id_obra LEFT JOIN tbl_proyecto_construccion as pc ON dpo.id_proyecto_construccion=pc.id_proyecto_construccion LEFT JOIN tbl_costo as c ON moc.id_costo=c.id_costo LEFT JOIN 
+        tbl_material as m ON moc.id_material=m.id_material 
+        LEFT JOIN tbl_costo_adicional as ca ON moc.id_costo_adicional=ca.id_costo_adicional 
+        WHERE pc.id_proyecto_construccion = $id_proyecto_construccion");
+        $responce = array();
+        foreach ($query->result() as $row)
         {
-            echo "<tr>";
-            echo "<td>".$row->nombre_material."</td>";
-            echo "<td>".$this->formato_numerico($row->precio_unitario)."</td>";
-            echo "<td>".$this->formato_numerico($row->cantidad)."</td>";
-            echo "<td>".$this->formato_numerico($row->precio)."</td>";
-            echo "<td>".$this->subtotal($row->precio_unitario, $row->cantidad, $row->precio)."</td>";
-            echo "<td>".$this->formato_d_m_a($row->fecha_costo)."</td>";
-            echo "</tr>";
+            switch($row->tipo) 
+            {
+                case '1':
+                $tipo_obra = 'Casco gris';
+                break;
+                case '2':
+                $tipo_obra = 'Acabados';
+                break;
+                case '3':
+                $tipo_obra = 'Casco Rojo';
+                break;
+            }
+            switch($row->estado_material_obra_costo) 
+            {
+                case '0':
+                $estado = 'Inactivo';
+                break;
+                case '1':
+                $estado = 'Activo';
+                break;
+            }
+            $fila = array(            
+                        'nombre_proyecto_construccion'=> $row->nombre_proyecto, 
+                        'nombre_material'=> $row->nombre_material, 
+                        'tipo_obra'=> $tipo_obra,
+                        'precio_unitario'=> $this->formato_numerico($row->precio_unitario),
+                        'cantidad'=> $this->formato_numerico($row->cantidad), 
+                        'costo_adicional'=> $this->formato_numerico($row->precio), 
+                        'subtotal'=> $this->subtotal($row->precio_unitario, $row->cantidad, $row->precio), 
+                        'fecha_costo'=> $this->formato_d_m_a($row->fecha_costo), 
+                        'fecha_normal' => $row->fecha_costo, //formato de fecha normal
+                        'inversion_total'=> strval($this->get_inversion_total($id_proyecto_construccion)),
+                        'estado_material_obra_costo'=> $estado
+            );
+            array_push($responce, $fila);
         }
-        echo "</table>";
-    }
+        echo json_encode($responce);
+    }   
     public function get_sueldo_semanal_trabajador($id_trabajador, $id_proyecto_construccion)
     {
         $monto_sueldo_semanal = 0;
@@ -249,45 +287,72 @@ class Finanza_model extends CI_Model
         $sueldo_a_cobrar = $total_horas_semanales * ($sueldo_semanal/48);
         return $this->formato_numerico($sueldo_a_cobrar);
     }
-    public function mostrar_sueldos_a_cobrar($inicio, $fin, $id_proyecto_construccion)
+    public function get_nombre_dia($fecha)
     {
-        $dia_actual = $inicio;
-        $query = $this->db->query("SELECT id_trabajador FROM `tbl_proyecto_construccion_trabajador` WHERE id_proyecto_construccion=$id_proyecto_construccion");
-        echo "<table class='table table-bordered table-hover'>
-                <th>TRABAJADOR</th>
-                <th>Sueldo Semanal</th>
-                <th>T/C</th>
-                <th>Lunes</th>
-                <th>Martes</th>
-                <th>Miércoles</th>
-                <th>Jueves</th>
-                <th>Viernes</th>
-                <th>Sábado</th>
-                <th>SUELDO A COBRAR</th>
-              </tr>";
+        $fechats = strtotime($fecha); //pasamos a timestamp
+        //el parametro w en la funcion date indica que queremos el dia de la semana
+        //lo devuelve en numero 0 domingo, 1 lunes,....
+        switch (date('w', $fechats))
+        {
+            case 0: return "Domingo"; break;
+            case 1: return "Lunes"; break;
+            case 2: return "Martes"; break;
+            case 3: return "Miercoles"; break;
+            case 4: return "Jueves"; break;
+            case 5: return "Viernes"; break;
+            case 6: return "Sabado"; break;
+        }
+    }
+    public function get_lunes($id_proyecto_construccion)
+    {
+        $lunes = '';
+        $query = $this->db->query("SELECT DISTINCT ch.fecha_control_horas FROM tbl_control_horas as ch 
+                                    LEFT JOIN tbl_control_horas_trabajador as cht ON ch.id_control_horas=cht.id_control_horas 
+                                    LEFT JOIN tbl_trabajador as t ON cht.id_trabajador=t.id_trabajador 
+                                    LEFT JOIN tbl_proyecto_construccion_trabajador as pct ON pct.id_trabajador=t.id_trabajador 
+                                    LEFT JOIN tbl_proyecto_construccion as pc ON pct.id_proyecto_construccion=pc.id_proyecto_construccion 
+                                    WHERE pc.id_proyecto_construccion=$id_proyecto_construccion");
         foreach($query->result() as $row)
         {
-            echo "<tr>";
-            echo "<td>".$this->get_nombres_apellidos_trabajador($row->id_trabajador)."</td>";
-            echo "<td>".$this->get_sueldo_semanal_trabajador($row->id_trabajador, $id_proyecto_construccion)."</td>";
-            echo "<td>48</td>";
-            echo "<td>".$this->get_horas_dia_trabajador($row->id_trabajador, $dia_actual)."</td>";
-            $dia_actual = $this->dia_siguiente($dia_actual);
-            echo "<td>".$this->get_horas_dia_trabajador($row->id_trabajador, $dia_actual)."</td>";
-            $dia_actual = $this->dia_siguiente($dia_actual);
-            echo "<td>".$this->get_horas_dia_trabajador($row->id_trabajador, $dia_actual)."</td>";
-            $dia_actual = $this->dia_siguiente($dia_actual);
-            echo "<td>".$this->get_horas_dia_trabajador($row->id_trabajador, $dia_actual)."</td>";
-            $dia_actual = $this->dia_siguiente($dia_actual);
-            echo "<td>".$this->get_horas_dia_trabajador($row->id_trabajador, $dia_actual)."</td>";
-            $dia_actual = $this->dia_siguiente($dia_actual);
-            echo "<td>".$this->get_horas_dia_trabajador($row->id_trabajador, $dia_actual)."</td>";
-            echo "<td>".$this->get_sueldo_a_cobrar($inicio, $fin, $row->id_trabajador, $id_proyecto_construccion)."</td>";
-            $dia_actual = $inicio;
-            echo "</tr>";
+            if ($this->get_nombre_dia($row->fecha_control_horas) == "Lunes")
+            {
+                $lunes = $row->fecha_control_horas;
+                break; //solo el primer lunes de los registros
+            }
         }
-        echo "</table>";
+        return $lunes;
     }
-    
+    public function listar_pagos()
+    {
+        $this->load->library('session');
+        $id_proyecto_construccion = $this->session->userdata('current_id');
+        $lunes = $this->get_lunes($id_proyecto_construccion);
+        $martes = $this->dia_siguiente($lunes);
+        $miercoles = $this->dia_siguiente($martes);
+        $jueves = $this->dia_siguiente($miercoles);
+        $viernes = $this->dia_siguiente($jueves);
+        $sabado = $this->dia_siguiente($viernes);
+        $responce = array();
+        $query = $this->db->query("SELECT id_trabajador FROM `tbl_proyecto_construccion_trabajador` WHERE id_proyecto_construccion=$id_proyecto_construccion");
+        foreach($query->result() as $row)
+        {
+            $fila = array(   
+                'codigo_trabajador' => $this->get_codigo_trabajador($row->id_trabajador),         
+                'nombres_apellidos_trabajador'=> $this->get_nombres_apellidos_trabajador($row->id_trabajador), 
+                'sueldo_semanal_trabajador'=> $this->get_sueldo_semanal_trabajador($row->id_trabajador, $id_proyecto_construccion), 
+                'TC'=> '48',
+                'horas_lunes'=> $this->get_horas_dia_trabajador($row->id_trabajador, $lunes),
+                'horas_martes'=> $this->get_horas_dia_trabajador($row->id_trabajador, $martes), 
+                'horas_miercoles'=> $this->get_horas_dia_trabajador($row->id_trabajador, $miercoles), 
+                'horas_jueves'=> $this->get_horas_dia_trabajador($row->id_trabajador, $jueves), 
+                'horas_viernes'=> $this->get_horas_dia_trabajador($row->id_trabajador, $viernes), 
+                'horas_sabado'=>  $this->get_horas_dia_trabajador($row->id_trabajador, $sabado),
+                'sueldo_cobrar'=>  $this->get_sueldo_a_cobrar($lunes, $sabado, $row->id_trabajador, $id_proyecto_construccion)
+            );
+            array_push($responce, $fila);
+
+        }
+        echo json_encode($responce);
+    }    
 }
 ?>
