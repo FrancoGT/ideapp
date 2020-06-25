@@ -155,7 +155,13 @@ CREATE TABLE `tbl_material_obra_costo`
   FOREIGN KEY (`id_costo`) REFERENCES tbl_costo(`id_costo`),
   FOREIGN KEY (`id_costo_adicional`) REFERENCES tbl_costo_adicional(`id_costo_adicional`)
 );
-
+CREATE TABLE `lottery_information`
+(
+  `ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `email` varchar(50) DEFAULT NULL,
+  `amount` decimal(20,0) DEFAULT NULL,
+  PRIMARY KEY(ID)
+);
 
 
 
